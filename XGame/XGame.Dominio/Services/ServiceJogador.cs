@@ -1,14 +1,23 @@
-﻿using System;
+﻿using prmToolkit.NotificationPattern;
+using System;
 using XGame.Dominio.Arguments.Jogador;
+using XGame.Dominio.Entities;
 using XGame.Dominio.Interfaces.Repositories;
 using XGame.Dominio.Interfaces.Services;
+using XGame.Dominio.ValueObjects;
 
 namespace XGame.Dominio.Services
 {
-    public class ServiceJogador : IServiceJogador
+    public class ServiceJogador : Notifiable, IServiceJogador
     {
 
         private readonly IRepositoryJogador _repositoryJogador;
+
+        public ServiceJogador()
+        {
+
+        }
+
 
         public ServiceJogador(IRepositoryJogador repositoryJogador)
         {
@@ -17,37 +26,34 @@ namespace XGame.Dominio.Services
 
         public AdicionarJogadorResponse AdcionarJogador(AdicionarJogadorRequest request)
         {
-            Guid id = _repositoryJogador.AdcionarJogador(request);
+            Jogador jogador = new Jogador();
+            jogador.Email = request.Email;
+            jogador.Nome = request.Nome;
+            jogador.Status = Enum.EnumSituacaoJogador.EmAndamento;
+            
+            Guid id = _repositoryJogador.AdcionarJogador(jogador);
+
+            jogador.Status = Enum.EnumSituacaoJogador.Ativo;
 
             return new AdicionarJogadorResponse() { Id = id, Message = "Operação realizada com sucesso!" };
         }
 
         public AutenticarJogadorResponse AutenticarJogador(AutenticarJogadorRequest request)
         {
-            //Validação
             if(request == null)
             {
-                throw new Exception("AutenticarJogadorRequest é obrigatório.");
+                AddNotification("AutenticarJogadorRequest", "AutenticarJogadorRequest é obrigatório.");
             }
 
-            if (string.IsNullOrEmpty(request.Email))
-            {
-                throw new Exception("Informe um e-mail.");
-            }
+            var email = new Email("jayme.a.santos@hotmail.com");
 
-            if (IsEmail(request.Email))
-            {
-                throw new Exception("Informe um e-mail.");
-            }
+            var jogador = new Jogador(email, "123");
 
-            if (string.IsNullOrEmpty(request.senha))
-            {
-                throw new Exception("Informe uma senha.");
-            }
+            AddNotifications(jogador);
 
-            if (request.senha.Length < 6)
+            if(jogador.IsInvalid())
             {
-                throw new Exception("Digite uma senha de no mínimo 6 caracteres.");
+                return null;
             }
 
             var response = _repositoryJogador.AutenticarJogador(request);
