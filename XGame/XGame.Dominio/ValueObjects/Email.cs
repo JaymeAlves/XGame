@@ -11,6 +11,6 @@ namespace XGame.Dominio.ValueObjects
             new AddNotifications<Email>(this).IfNotEmail(x => x.Endereco);
         }
 
-        public string Endereco { get; set; }
+        public string Endereco { get; private set; }
     }
 }

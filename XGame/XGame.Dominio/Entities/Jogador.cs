@@ -32,7 +32,6 @@ namespace XGame.Dominio.Entities
 
             //Validação
             new AddNotifications<Jogador>(this)
-                .IfNotEmail(x => x.Email.Endereco, "Informe um e-mail valido")
                 .IfNullOrInvalidLength(x => x.senha, 6, 23, "A senha deve ter entre 6 a 32 caracteres");
 
             //if (request == null)

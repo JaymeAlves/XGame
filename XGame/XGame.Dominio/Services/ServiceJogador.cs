@@ -1,4 +1,5 @@
 ﻿using prmToolkit.NotificationPattern;
+using prmToolkit.NotificationPattern.Resources;
 using System;
 using XGame.Dominio.Arguments.Jogador;
 using XGame.Dominio.Entities;
@@ -42,14 +43,13 @@ namespace XGame.Dominio.Services
         {
             if(request == null)
             {
-                AddNotification("AutenticarJogadorRequest", "AutenticarJogadorRequest é obrigatório.");
+                AddNotification("AutenticarJogadorRequest", Message.);
             }
 
-            var email = new Email("jayme.a.santos@hotmail.com");
-
+            var email = new Email("jayme");
             var jogador = new Jogador(email, "123");
 
-            AddNotifications(jogador);
+            AddNotifications(jogador, email);
 
             if(jogador.IsInvalid())
             {
